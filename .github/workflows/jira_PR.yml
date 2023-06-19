@@ -1,0 +1,56 @@
+name: Jira transition
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  Test-JIRA-Actions:
+    runs-on: [self-hosted, macos, x64, jira_mac]
+    steps:
+      - name: finding issue id
+        id: issueInfo
+        shell: bash
+        run: |
+          echo ${{ github.event.pull_request.title }}
+
+          key="$(cut -d':' -f1 <<<'${{ github.event.pull_request.title }}')"
+          echo key found : $key
+          echo "issueID=$key" >> $GITHUB_OUTPUT
+
+      - name: JIRA cli clean install
+        if: always()
+        shell: pwsh
+        run: |
+          rmdir -r -Force .\.jira.d
+
+#      - name: Set up JIRA cli
+#        shell: pwsh
+#        run: |
+#          curl -o jira.exe -L https://github.com/go-jira/jira/releases/download/v1.0.27/jira-windows-amd64.exe
+#          mkdir .jira.d
+#
+#          echo "endpoint: ${{ secrets.JIRA_PASSWORD }}" >> .\.jira.d\config.yml
+#          echo "user: ${{ secrets.JIRA_USER }}" >> .\.jira.d\config.yml
+#          type .\.jira.d\config.yml
+#          $password='${{ secrets.JIRA_PASSWORD }}'
+#          (New-Object -ComObject WScript.Shell).SendKeys("$password{ENTER}"); .\jira.exe login
+#
+#      - name: Test functionality of jira cli
+#        shell: cmd
+#        run: |
+#          echo "Checking all available transitions for this issue"
+#          jira.exe transitions ${{ steps.issueInfo.outputs.issueID}}
+#          jira.exe transition "in progress" ${{ steps.issueInfo.outputs.issueID}} --noedit
+#          jira.exe transition "blocked" ${{ steps.issueInfo.outputs.issueID}} --noedit
+#          jira.exe transition "in review" ${{ steps.issueInfo.outputs.issueID}} --noedit
+#          jira.exe transition "done" ${{ steps.issueInfo.outputs.issueID}} --noedit
+#          jira.exe transition "in progress" ${{ steps.issueInfo.outputs.issueID}} --noedit
+#          echo "transition check complete"
+#          echo "comment check"
+#          jira.exe comment ${{ steps.issueInfo.outputs.issueID}} --comment="This is a test comment from PR using cli" --noedit
+#          echo "comment check complete"
+
+          
