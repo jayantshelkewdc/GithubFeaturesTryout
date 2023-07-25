@@ -1,0 +1,23 @@
+name: Release Creation
+
+on:
+  workflow_dispatch:
+
+env:
+  RELEASE_VERSION: 1.0.0
+  
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create new github release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: "TAG-${{ env.RELEASE_VERSION }}",
+              name: "v${{ env.RELEASE_VERSION }}",
+              generate_release_notes: true,
+            })
