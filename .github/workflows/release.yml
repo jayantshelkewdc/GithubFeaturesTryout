@@ -10,6 +10,16 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     steps:
+      - name: Tag build version
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: '${{ env.RELEASE_VERSION }}',
+              sha: context.sha
+            })
       - name: Generate notes for new release
         id: generate-notes
         uses: actions/github-script@v6
@@ -19,7 +29,7 @@ jobs:
             const response = await github.rest.repos.generateReleaseNotes({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: "TAG-${{ env.RELEASE_VERSION }}",
+              tag_name: "${{ env.RELEASE_VERSION }}",
               target_commitish: "main",
               configuration_file_path: ".github/workflows/changelog_template.yml"
             });
@@ -31,7 +41,7 @@ jobs:
             github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: "TAG-${{ env.RELEASE_VERSION }}",
+              tag_name: "${{ env.RELEASE_VERSION }}",
               name: "v${{ env.RELEASE_VERSION }}",
               generate_release_notes: false,
               body: `${{ steps.generate-notes.outputs.result }}\n\n**GitHub Action Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
