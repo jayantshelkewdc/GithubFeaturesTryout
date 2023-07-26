@@ -21,7 +21,7 @@ jobs:
               repo: context.repo.repo,
               tag_name: "TAG-${{ env.RELEASE_VERSION }}",
               target_commitish: "main",
-              configuration_file_path: ".github/changelog_template.yml"
+              configuration_file_path: ".github/workflows/changelog_template.yml"
             });
             return response.data.body
       - name: Create new github release
