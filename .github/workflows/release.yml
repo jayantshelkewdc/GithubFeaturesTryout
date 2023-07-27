@@ -30,7 +30,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: "TAG-${{ env.RELEASE_VERSION }}",
-              target_commitish: "main",
+              target_commitish: "dev",
               configuration_file_path: ".github/workflows/changelog_template.yml"
             });
             return response.data.body
