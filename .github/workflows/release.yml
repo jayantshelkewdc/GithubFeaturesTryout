@@ -17,7 +17,7 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'TAG-${{ env.RELEASE_VERSION }}',
+              ref: 'refs/tags/TAG-${{ env.RELEASE_VERSION }}',
               sha: context.sha
             })
       - name: Generate notes for new release
